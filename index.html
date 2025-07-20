@@ -2,7 +2,6 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <!-- ★★★ 1. viewport-fit=cover 추가 ★★★ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
     <!-- PWA & 홈 화면에 추가 설정 -->
@@ -42,9 +41,8 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px; /* 상하 패딩은 헤더와 컨테이너에서 개별 관리 */
-            /* ★★★ 3. 하단 여백 증가 ★★★ */
-            padding-bottom: 110px; /* 플로팅된 Navbar 높이 + 추가 공간 */
+            padding: 0 20px;
+            padding-bottom: 110px;
             overflow-x: hidden;
             color: #EAEAEA;
         }
@@ -54,7 +52,7 @@
             max-width: 400px;
             background: transparent;
             border-radius: 24px;
-            padding: 0 24px 32px; /* 상단 패딩 제거 */
+            padding: 0 24px 32px;
             text-align: center;
             animation: slideUp 0.6s ease-out;
         }
@@ -75,8 +73,9 @@
             top: 0;
             z-index: 10;
             background: #000000;
-            width: 100vw; /* 화면 전체 너비 */
-            padding-top: 20px; /* 원래 body에 있던 상단 패딩 */
+            width: 100vw;
+            /* ★★★ 상단 안전 영역 확보 ★★★ */
+            padding-top: calc(20px + env(safe-area-inset-top));
             text-align: center;
         }
 
@@ -90,7 +89,7 @@
         .subtitle {
             font-size: 0.9rem;
             color: #8A8A8E;
-            margin-bottom: 24px; /* 헤더와 컨테이너 사이 간격 조정 */
+            margin-bottom: 24px;
             font-weight: 300;
         }
 
@@ -418,35 +417,25 @@
             color: #8A8A8E;
         }
 
-        /* ★★★ 2. Sticky Navbar CSS 수정 ★★★ */
         .bottom-nav {
             position: fixed;
-            /* bottom: 0; -> calc() 함수로 변경 */
-            /* left: 0; right: 0; width: 100%; -> 좌우 여백 추가 */
-
-            /* iOS Safe Area 및 플로팅 효과 적용 */
             left: 10px;
             right: 10px;
             bottom: calc(10px + env(safe-area-inset-bottom));
-            width: auto; /* left, right가 있으므로 auto로 설정 */
-
+            width: auto;
             height: 70px;
-            background: rgba(28, 28, 30, 0.85); /* 반투명 효과 추가 */
-            -webkit-backdrop-filter: blur(10px); /* iOS 블러 효과 */
+            background: rgba(28, 28, 30, 0.85);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
-
             display: flex;
             justify-content: space-around;
             align-items: center;
-
-            /* border-top: 1px solid #38383A; -> 테두리 제거 또는 변경 */
             border: 1px solid #38383A;
-            border-radius: 24px; /* 둥근 모서리 */
-
+            border-radius: 24px;
             z-index: 1000;
             padding: 0 10px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4); /* 그림자 효과 강화 */
-            transition: bottom 0.3s ease-out; /* 부드러운 전환 효과 */
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            transition: bottom 0.3s ease-out;
         }
 
 
@@ -487,7 +476,7 @@
             align-items: center;
             justify-content: center;
             transform: translateY(-25px);
-            border: 4px solid #1C1C1E; /* 배경색과 유사하게 변경 */
+            border: 4px solid #1C1C1E;
             box-shadow: 0 -4px 8px rgba(0,0,0,0.2);
             transition: transform 0.2s ease, background-color 0.2s ease;
         }
@@ -608,6 +597,8 @@
     </footer>
 
     <script>
+        // JavaScript 코드는 변경되지 않았으므로 생략합니다.
+        // 기존 JS 코드를 그대로 사용하시면 됩니다.
         document.addEventListener('DOMContentLoaded', () => {
             // --- 상수 정의 ---
             const DEFAULT_HALF_LIFE_HOURS = 5;
@@ -869,43 +860,32 @@
 
             // --- 핵심 로직 ---
 
-            // ★★★ 미래 카페인 감소량 계산 함수 - 추가 ★★★
             function updateFutureProjection() {
                 const projectionData = caffeineChart.data.datasets[2].data;
-                projectionData.length = 0; // 기존 예상 데이터 초기화
-
+                projectionData.length = 0; 
                 const lineData = caffeineChart.data.datasets[0].data;
                 if (lineData.length === 0) {
-                    return; // 데이터 없으면 중단
+                    return; 
                 }
-
                 const lastPoint = lineData[lineData.length - 1];
                 const startTime = lastPoint.x;
                 const startAmount = lastPoint.y;
-
-                if (startAmount < 1) { // 카페인이 거의 없으면 그리지 않음
+                if (startAmount < 1) { 
                     return;
                 }
-
-                // 예상 그래프가 실제 그래프와 이어지도록 첫 점을 추가
                 projectionData.push({ x: startTime, y: startAmount });
-                
-                const projectionHours = 12; // 12시간 후까지 예측
-                const timeStepMinutes = 15; // 15분 간격으로 계산
+                const projectionHours = 12; 
+                const timeStepMinutes = 15;
                 const totalSteps = (projectionHours * 60) / timeStepMinutes;
-
                 for (let i = 1; i <= totalSteps; i++) {
                     const timeElapsed = i * timeStepMinutes * 60 * 1000;
                     const futureTime = startTime + timeElapsed;
-                    
                     const decayFactor = Math.pow(0.5, timeElapsed / CAFFEINE_HALF_LIFE_MS);
                     const futureAmount = startAmount * decayFactor;
-
                     if (futureAmount < 1) {
                         projectionData.push({ x: futureTime, y: 0 });
-                        break; // 1mg 미만이면 0으로 그리고 종료
+                        break; 
                     }
-
                     projectionData.push({ x: futureTime, y: futureAmount });
                 }
             }
@@ -913,12 +893,10 @@
             function updateDrinkStats() {
                 const scatterData = caffeineChart.data.datasets[1].data;
                 drinkStatsContainer.innerHTML = '';
-
                 if (scatterData.length === 0) {
                     drinkStatsContainer.innerHTML = '<p class="no-stats-message">아직 섭취 기록이 없습니다.</p>';
                     return;
                 }
-
                 const stats = scatterData.reduce((acc, intake) => {
                     const { name, amount } = intake;
                     if (!acc[name]) {
@@ -928,21 +906,16 @@
                     acc[name].totalAmount += amount;
                     return acc;
                 }, {});
-
                 const sortedStats = Object.entries(stats).sort(([, a], [, b]) => b.count - a.count);
-
                 sortedStats.forEach(([name, data]) => {
                     const statItem = document.createElement('div');
                     statItem.className = 'stat-item';
-
                     const drinkNameSpan = document.createElement('span');
                     drinkNameSpan.className = 'stat-drink-name';
                     drinkNameSpan.innerHTML = `${DRINK_EMOJIS[name] || '<i class="fa-solid fa-question"></i>'} ${name}`;
-
                     const detailsSpan = document.createElement('span');
                     detailsSpan.className = 'stat-details';
                     detailsSpan.textContent = `${data.count}회 / ${data.totalAmount.toFixed(0)}mg`;
-
                     statItem.appendChild(drinkNameSpan);
                     statItem.appendChild(detailsSpan);
                     drinkStatsContainer.appendChild(statItem);
@@ -952,7 +925,6 @@
             function updateCaffeineDisplay(amount) {
                 const displayAmount = Math.max(0, amount);
                 currentCaffeineLevelSpan.textContent = displayAmount.toFixed(1);
-                
                 const caffeineElement = document.querySelector('.caffeine-amount');
                 if (displayAmount > 200) {
                     caffeineElement.style.color = '#FF453A';
@@ -963,50 +935,39 @@
                 } else {
                     caffeineElement.style.color = '#34C759';
                 }
-                
                 if (displayAmount > dailyCaffeineLimit) {
                     caffeineLimitWarning.classList.remove('hidden');
                 } else {
                     caffeineLimitWarning.classList.add('hidden');
                 }
-
                 updateEstimatedClearTime(displayAmount);
             }
 
             function updateEstimatedClearTime(currentAmount) {
                 const thresholdAnnotation = caffeineChart.options.plugins.annotation.annotations.thresholdLine;
-
                 if (currentAmount <= TIME_TO_CLEAR_THRESHOLD_MG) {
                     timeToClearContainer.classList.add('hidden');
                     thresholdAnnotation.display = false;
                     return;
                 }
-
                 timeToClearContainer.classList.remove('hidden');
-
                 const timeToReachThresholdMs = CAFFEINE_HALF_LIFE_MS * Math.log2(currentAmount / TIME_TO_CLEAR_THRESHOLD_MG);
-
                 if (timeToReachThresholdMs <= 0) {
                     timeToClearContainer.classList.add('hidden');
                     thresholdAnnotation.display = false;
                     return;
                 }
-
                 const hours = Math.floor(timeToReachThresholdMs / (1000 * 60 * 60));
                 const minutes = Math.floor((timeToReachThresholdMs % (1000 * 60 * 60)) / (1000 * 60));
-
                 let timeString = '';
                 if (hours > 0) {
                     timeString += `${hours}시간 `;
                 }
                 timeString += `${minutes}분`;
-
                 timeToClearSpan.textContent = `약 ${timeString.trim()} 후`;
-
                 const targetTimestamp = Date.now() + timeToReachThresholdMs;
                 const targetDate = new Date(targetTimestamp);
                 const annotationTime = targetDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
-
                 thresholdAnnotation.value = targetTimestamp;
                 thresholdAnnotation.label.content = `${annotationTime} (10mg↓)`;
                 thresholdAnnotation.display = true;
@@ -1015,17 +976,14 @@
             function rebuildLineData() {
                 const lineData = caffeineChart.data.datasets[0].data;
                 const scatterData = caffeineChart.data.datasets[1].data;
-
                 lineData.length = 0;
                 scatterData.sort((a, b) => a.x - b.x);
-
                 if (scatterData.length === 0) {
                     updateCaffeineDisplay(0);
-                    updateFutureProjection(); // ★★★ 데이터 없을 때도 예상선 초기화
+                    updateFutureProjection();
                     caffeineChart.update('none');
                     return;
                 }
-
                 const getTotalCaffeineAtTime = (time) => {
                     return scatterData.reduce((total, intake) => {
                         if (intake.x <= time) {
@@ -1036,24 +994,19 @@
                         return total;
                     }, 0);
                 };
-
                 scatterData.forEach(point => {
                     point.y = getTotalCaffeineAtTime(point.x);
                 });
-
                 const firstIntakeTime = scatterData[0].x;
                 const now = Date.now();
                 const timeStep = 5 * 60 * 1000;
-
                 for (let t = firstIntakeTime; t < now; t += timeStep) {
                     lineData.push({ x: t, y: getTotalCaffeineAtTime(t) });
                 }
-
                 const finalAmount = getTotalCaffeineAtTime(now);
                 lineData.push({ x: now, y: finalAmount });
-
                 updateCaffeineDisplay(finalAmount);
-                updateFutureProjection(); // ★★★ 실제 데이터 재계산 후 예상선 업데이트
+                updateFutureProjection();
                 caffeineChart.update('none');
             }
 
@@ -1068,10 +1021,8 @@
             function setDayView() {
                 const todayStart = new Date().setHours(0, 0, 0, 0);
                 const todayEnd = new Date().setHours(23, 59, 59, 999);
-
                 caffeineChart.options.scales.x.min = todayStart;
                 caffeineChart.options.scales.x.max = todayEnd;
-                
                 resetZoomBtn.innerHTML = BUTTON_TEXT_DAY_VIEW;
                 currentZoomMode = ZOOM_MODE_DAY;
             }
@@ -1089,17 +1040,16 @@
                 if (confirm('모든 섭취 기록과 설정을 초기화하시겠습니까?')) {
                     caffeineChart.data.datasets[0].data = [];
                     caffeineChart.data.datasets[1].data = [];
-                    caffeineChart.data.datasets[2].data = []; // ★★★ 예상선 데이터도 리셋
+                    caffeineChart.data.datasets[2].data = [];
                     updateCaffeineDisplay(0);
                     localStorage.removeItem(STORAGE_KEY);
                     localStorage.removeItem(HALF_LIFE_STORAGE_KEY);
                     localStorage.removeItem(DAILY_LIMIT_STORAGE_KEY);
-                    
                     caffeineChart.update();
                     setHalfLife(DEFAULT_HALF_LIFE_HOURS);
                     setDailyLimit(DEFAULT_DAILY_LIMIT_MG);
                     setHourView();
-                    updateFutureProjection(); // ★★★ 예상선 초기화
+                    updateFutureProjection();
                     caffeineChart.update('none');
                     currentDay = new Date().setHours(0, 0, 0, 0);
                     updateDrinkStats();
@@ -1109,13 +1059,10 @@
             function addCaffeine(amount, name, elementToAnimate = null) {
                 const now = Date.now();
                 const scatterData = caffeineChart.data.datasets[1].data;
-
                 scatterData.push({ x: now, amount: amount, name: name });
-
                 rebuildLineData();
                 updateDrinkStats();
                 saveDataToStorage(scatterData);
-                
                 if (elementToAnimate) {
                     elementToAnimate.style.transform = 'scale(0.95)';
                     setTimeout(() => {
@@ -1127,35 +1074,28 @@
             function simulateDecay() {
                 const now = Date.now();
                 const todayStartOfDay = new Date(now).setHours(0, 0, 0, 0);
-
                 if (todayStartOfDay > currentDay) {
                     currentDay = todayStartOfDay;
                     resetAllData();
                     caffeineChart.update();
                     return;
                 }
-
                 const lineData = caffeineChart.data.datasets[0].data;
                 if (lineData.length === 0) return;
-
                 const lastPoint = lineData[lineData.length - 1];
                 const timeElapsed = now - lastPoint.x;
-
                 if (timeElapsed > 0) {
                     const decayFactor = Math.pow(0.5, timeElapsed / CAFFEINE_HALF_LIFE_MS);
                     let newAmount = lastPoint.y * decayFactor;
                     if (newAmount < 0.1) newAmount = 0;
-                    
                     lineData.push({ x: now, y: newAmount });
                     updateCaffeineDisplay(newAmount);
-
                     const oneDayAgo = now - 24 * 60 * 60 * 1000;
                     const firstValidIndex = lineData.findIndex(p => p.x >= oneDayAgo);
                     if (firstValidIndex > 0) {
                         lineData.splice(0, firstValidIndex);
                     }
-                    
-                    updateFutureProjection(); // ★★★ 실시간 감소 시에도 예상선 업데이트
+                    updateFutureProjection();
                     caffeineChart.update('none');
                 }
             }
@@ -1168,17 +1108,14 @@
                     addCaffeine(amount, name, event.currentTarget);
                 });
             });
-
             addCustomCaffeineBtn.addEventListener('click', (event) => {
                 const amount = parseInt(customCaffeineAmountInput.value, 10);
                 let name = customDrinkNameInput.value.trim();
-
                 if (isNaN(amount) || amount <= 0) {
                     alert('유효한 카페인 양을 입력해주세요.');
                     customCaffeineAmountInput.focus();
                     return;
                 }
-
                 if (name === '') {
                     name = '직접 입력';
                 }
@@ -1190,12 +1127,9 @@
             function setHalfLife(value) {
                 const newHalfLife = Math.max(0.1, Math.min(24, parseFloat(value)));
                 if (isNaN(newHalfLife)) return;
-
                 caffeineHalfLifeHours = newHalfLife;
                 CAFFEINE_HALF_LIFE_MS = caffeineHalfLifeHours * 60 * 60 * 1000;
-                
                 halfLifeNumberInput.value = newHalfLife.toFixed(1);
-                
                 localStorage.setItem(HALF_LIFE_STORAGE_KEY, newHalfLife);
                 rebuildLineData();
                 saveDataToStorage(caffeineChart.data.datasets[1].data);
@@ -1204,16 +1138,13 @@
             function setDailyLimit(value) {
                 const newLimit = parseInt(value, 10);
                 if (isNaN(newLimit) || newLimit <= 0) return;
-
                 dailyCaffeineLimit = newLimit;
                 dailyLimitInput.value = newLimit;
-
                 const limitLine = caffeineChart.options.plugins.annotation.annotations.limitLine;
                 limitLine.yMin = newLimit;
                 limitLine.yMax = newLimit;
                 limitLine.label.content = `일일 권장량 (${newLimit}mg)`;
                 caffeineChart.update('none');
-
                 localStorage.setItem(DAILY_LIMIT_STORAGE_KEY, newLimit);
                 updateCaffeineDisplay(parseFloat(currentCaffeineLevelSpan.textContent));
             }
@@ -1226,26 +1157,21 @@
             // --- 초기화 실행 ---
             const savedHalfLife = localStorage.getItem(HALF_LIFE_STORAGE_KEY);
             setHalfLife(savedHalfLife || DEFAULT_HALF_LIFE_HOURS);
-
             const savedLimit = localStorage.getItem(DAILY_LIMIT_STORAGE_KEY);
             setDailyLimit(savedLimit || DEFAULT_DAILY_LIMIT_MG);
-
             rebuildLineData();
             updateDrinkStats();
             setHourView();
-
             setInterval(simulateDecay, UPDATE_INTERVAL_MS);
 
             // --- Sticky Navbar Logic ---
             const navLinks = document.querySelectorAll('.bottom-nav .nav-item');
             const sections = document.querySelectorAll('.container > div[id]');
-
             navLinks.forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
                     const targetElement = document.querySelector(targetId);
-
                     if (targetElement) {
                         targetElement.scrollIntoView({
                             behavior: 'smooth',
@@ -1254,7 +1180,6 @@
                     }
                 });
             });
-
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -1267,7 +1192,6 @@
                     }
                 });
             }, { rootMargin: '-50% 0px -50% 0px' });
-
             sections.forEach(section => observer.observe(section));
         });
     </script>
