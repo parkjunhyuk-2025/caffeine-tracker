@@ -37,7 +37,7 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 0 20px; /* 상하 패딩은 헤더와 컨테이너에서 개별 관리 */
             padding-bottom: 90px; /* Navbar height + space */
             overflow-x: hidden;
             color: #EAEAEA;
@@ -48,7 +48,7 @@
             max-width: 400px;
             background: transparent;
             border-radius: 24px;
-            padding: 32px 24px;
+            padding: 0 24px 32px; /* 상단 패딩 제거 */
             text-align: center;
             animation: slideUp 0.6s ease-out;
         }
@@ -64,6 +64,16 @@
             }
         }
 
+        .main-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #000000;
+            width: 100vw; /* 화면 전체 너비 */
+            padding-top: 20px; /* 원래 body에 있던 상단 패딩 */
+            text-align: center;
+        }
+
         h1 {
             font-size: 2.5rem;
             font-weight: 700;
@@ -74,7 +84,7 @@
         .subtitle {
             font-size: 0.9rem;
             color: #8A8A8E;
-            margin-bottom: 32px;
+            margin-bottom: 24px; /* 헤더와 컨테이너 사이 간격 조정 */
             font-weight: 300;
         }
 
@@ -455,10 +465,11 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <header class="main-header">
         <h1>카페인 트래커</h1>
         <p class="subtitle">체내 카페인 수준을 실시간으로 모니터링하세요</p>
-
+    </header>
+    <div class="container">
         <!-- 메뉴 순서에 맞게 재배치 및 ID 추가 -->
         <div id="current" class="current-level">
             <h2>현재 체내 카페인</h2>
