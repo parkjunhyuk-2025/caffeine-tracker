@@ -104,6 +104,37 @@
             border: 1px solid #38383A;
         }
 
+        /* ★★★ START: 새로 추가된 차트 줌 토글 버튼 스타일 ★★★ */
+        .chart-zoom-toggle-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 20; /* 차트 위에 표시되도록 */
+            background-color: rgba(44, 44, 46, 0.8); /* 반투명 배경 */
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            border: 1px solid #38383A;
+            color: #EAEAEA;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%; /* 원형 버튼 */
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .chart-zoom-toggle-btn:hover {
+            background-color: #3A3A3C;
+        }
+
+        .chart-zoom-toggle-btn:active {
+            transform: scale(0.95);
+        }
+        /* ★★★ END: 새로 추가된 차트 줌 토글 버튼 스타일 ★★★ */
+
         .current-level {
             background: #1C1C1E;
             border-radius: 16px;
@@ -512,6 +543,11 @@
 
         <div id="chart" class="chart-container">
             <canvas id="caffeineChart"></canvas>
+            <!-- ★★★ START: 줌 토글 버튼 위치 변경 ★★★ -->
+            <button id="chartZoomToggleBtn" class="chart-zoom-toggle-btn" title="하루 기록 보기">
+                <i class="fa-solid fa-calendar-day"></i>
+            </button>
+            <!-- ★★★ END: 줌 토글 버튼 위치 변경 ★★★ -->
         </div>
 
         <div id="timeToClearContainer" class="info-card hidden">
@@ -552,10 +588,11 @@
                     <label for="dailyLimitInput">권장량 (mg)</label>
                     <input type="number" id="dailyLimitInput" class="settings-input" min="50" max="1000" step="10" value="400">
                 </div>
+                <!-- ★★★ START: 기존 '하루 기록' 버튼 삭제 ★★★ -->
                 <div class="action-buttons">
-                    <button id="resetZoomBtn" class="action-btn"><i class="fa-solid fa-calendar-day"></i>하루 기록</button>
                     <button id="resetDataBtn" class="action-btn danger"><i class="fa-solid fa-trash-can"></i>데이터 리셋</button>
                 </div>
+                <!-- ★★★ END: 기존 '하루 기록' 버튼 삭제 ★★★ -->
             </div>
 
             <div id="stats" class="control-section">
@@ -597,16 +634,18 @@
     </footer>
 
     <script>
-        // JavaScript 코드는 변경되지 않았으므로 생략합니다.
-        // 기존 JS 코드를 그대로 사용하시면 됩니다.
         document.addEventListener('DOMContentLoaded', () => {
             // --- 상수 정의 ---
             const DEFAULT_HALF_LIFE_HOURS = 5;
             const UPDATE_INTERVAL_MS = 1000;
             const ZOOM_MODE_HOUR = 'hour';
             const ZOOM_MODE_DAY = 'day';
-            const BUTTON_TEXT_HOUR_VIEW = '<i class="fa-solid fa-calendar-day"></i> 하루 기록';
-            const BUTTON_TEXT_DAY_VIEW = '<i class="fa-solid fa-clock-rotate-left"></i> 1시간 기록';
+            // ★★★ START: 버튼 텍스트 대신 아이콘과 툴팁을 사용 ★★★
+            const ICON_HOUR_VIEW = '<i class="fa-solid fa-calendar-day"></i>';
+            const ICON_DAY_VIEW = '<i class="fa-solid fa-clock"></i>';
+            const TOOLTIP_HOUR_VIEW = '하루 기록 보기';
+            const TOOLTIP_DAY_VIEW = '최근 1시간 보기';
+            // ★★★ END: 버튼 텍스트 대신 아이콘과 툴팁을 사용 ★★★
             const STORAGE_KEY = 'caffeineTrackerData';
             const HALF_LIFE_STORAGE_KEY = 'caffeineHalfLife';
             const DAILY_LIMIT_STORAGE_KEY = 'caffeineDailyLimit';
@@ -637,7 +676,9 @@
             const currentCaffeineLevelSpan = document.getElementById('currentCaffeineLevel');
             const controlButtons = document.querySelectorAll('.caffeine-btn[data-caffeine]');
             const resetDataBtn = document.getElementById('resetDataBtn');
-            const resetZoomBtn = document.getElementById('resetZoomBtn');
+            // ★★★ START: 줌 버튼 DOM 요소 변경 ★★★
+            const chartZoomToggleBtn = document.getElementById('chartZoomToggleBtn');
+            // ★★★ END: 줌 버튼 DOM 요소 변경 ★★★
             const halfLifeNumberInput = document.getElementById('halfLifeNumberInput');
             const timeToClearContainer = document.getElementById('timeToClearContainer');
             const timeToClearSpan = document.getElementById('timeToClear');
@@ -1010,11 +1051,13 @@
                 caffeineChart.update('none');
             }
 
+            // ★★★ START: 줌 버튼 UI 업데이트 로직 수정 ★★★
             function setHourView() {
                 const now = Date.now();
                 caffeineChart.options.scales.x.min = now - 30 * 60 * 1000;
                 caffeineChart.options.scales.x.max = now + 30 * 60 * 1000;
-                resetZoomBtn.innerHTML = BUTTON_TEXT_HOUR_VIEW;
+                chartZoomToggleBtn.innerHTML = ICON_HOUR_VIEW;
+                chartZoomToggleBtn.title = TOOLTIP_HOUR_VIEW;
                 currentZoomMode = ZOOM_MODE_HOUR;
             }
 
@@ -1023,9 +1066,11 @@
                 const todayEnd = new Date().setHours(23, 59, 59, 999);
                 caffeineChart.options.scales.x.min = todayStart;
                 caffeineChart.options.scales.x.max = todayEnd;
-                resetZoomBtn.innerHTML = BUTTON_TEXT_DAY_VIEW;
+                chartZoomToggleBtn.innerHTML = ICON_DAY_VIEW;
+                chartZoomToggleBtn.title = TOOLTIP_DAY_VIEW;
                 currentZoomMode = ZOOM_MODE_DAY;
             }
+            // ★★★ END: 줌 버튼 UI 업데이트 로직 수정 ★★★
 
             function toggleZoomView() {
                 if (currentZoomMode === ZOOM_MODE_HOUR) {
@@ -1151,7 +1196,9 @@
 
             halfLifeNumberInput.addEventListener('change', () => setHalfLife(halfLifeNumberInput.value));
             dailyLimitInput.addEventListener('change', () => setDailyLimit(dailyLimitInput.value));
-            resetZoomBtn.addEventListener('click', toggleZoomView);
+            // ★★★ START: 새 줌 버튼에 이벤트 리스너 연결 ★★★
+            chartZoomToggleBtn.addEventListener('click', toggleZoomView);
+            // ★★★ END: 새 줌 버튼에 이벤트 리스너 연결 ★★★
             resetDataBtn.addEventListener('click', resetAllData);
 
             // --- 초기화 실행 ---
