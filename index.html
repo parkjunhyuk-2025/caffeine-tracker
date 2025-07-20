@@ -29,6 +29,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px;
+            padding-bottom: 90px; /* Navbar height + space */
             overflow-x: hidden;
             color: #EAEAEA;
         }
@@ -368,23 +369,98 @@
             font-size: 0.8rem;
             color: #8A8A8E;
         }
+
+        /* Sticky Navbar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 70px;
+            background: #1C1C1E;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #38383A;
+            z-index: 1000;
+            padding: 0 10px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #8A8A8E;
+            font-size: 0.7rem;
+            font-weight: 500;
+            flex: 1;
+            height: 100%;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+
+        .nav-item.active {
+            color: #FFFFFF;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+        }
+
+        .nav-item.prominent {
+            color: #FFFFFF;
+        }
+
+        .prominent-icon-wrapper {
+            background-color: #0A84FF;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(-25px);
+            border: 4px solid #000000;
+            box-shadow: 0 -4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        
+        .prominent-icon-wrapper .nav-icon {
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .nav-item.prominent .nav-text {
+            position: absolute;
+            bottom: 8px;
+        }
+
+        .nav-item.prominent:hover .prominent-icon-wrapper {
+            transform: translateY(-28px) scale(1.05);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>카페인 트래커</h1>
         <p class="subtitle">체내 카페인 수준을 실시간으로 모니터링하세요</p>
-        
-        <div class="chart-container">
-            <canvas id="caffeineChart"></canvas>
-        </div>
 
-        <div class="current-level">
+        <!-- 메뉴 순서에 맞게 재배치 및 ID 추가 -->
+        <div id="current" class="current-level">
             <h2>현재 체내 카페인</h2>
             <div class="caffeine-value-container">
                 <div class="caffeine-amount" id="currentCaffeineLevel">0.0</div>
                 <div class="caffeine-unit">mg</div>
             </div>
+        </div>
+
+        <div id="chart" class="chart-container">
+            <canvas id="caffeineChart"></canvas>
         </div>
 
         <div id="timeToClearContainer" class="info-card hidden">
@@ -397,7 +473,7 @@
 
 
         <div class="controls">
-            <div class="control-section">
+            <div id="intake" class="control-section">
                 <div class="section-title">카페인 섭취하기</div>
                 <div class="button-grid">
                     <button class="caffeine-btn" data-caffeine="150" data-name="커피">☕️ 아메리카노<br><small>150mg</small></button>
@@ -416,7 +492,7 @@
                 </div>
             </div>
 
-            <div class="control-section">
+            <div id="settings" class="control-section">
                 <div class="section-title">설정 및 관리</div>
                 <div class="settings-row">
                     <label for="halfLifeNumberInput">반감기 (시간)</label>
@@ -432,7 +508,7 @@
                 </div>
             </div>
 
-            <div class="control-section">
+            <div id="stats" class="control-section">
                 <div class="section-title">섭취 통계</div>
                 <div id="drinkStatsContainer">
                     <p class="no-stats-message">아직 섭취 기록이 없습니다.</p>
@@ -440,6 +516,31 @@
             </div>
         </div>
     </div>
+
+    <nav class="bottom-nav">
+        <a href="#current" class="nav-item active">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">현재</span>
+        </a>
+        <a href="#chart" class="nav-item">
+            <span class="nav-icon">📈</span>
+            <span class="nav-text">챠트</span>
+        </a>
+        <a href="#intake" class="nav-item prominent">
+            <div class="prominent-icon-wrapper">
+                <span class="nav-icon">➕</span>
+            </div>
+            <span class="nav-text">카페인섭취</span>
+        </a>
+        <a href="#settings" class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-text">설정</span>
+        </a>
+        <a href="#stats" class="nav-item">
+            <span class="nav-icon">📝</span>
+            <span class="nav-text">통계</span>
+        </a>
+    </nav>
 
     <footer>
         <p>Copyright 2025. 박준혁. All rights reserved.</p>
@@ -1052,6 +1153,41 @@
 
     // 1초마다 카페인 감소 시뮬레이션 실행
     setInterval(simulateDecay, UPDATE_INTERVAL_MS);
+
+    // --- Sticky Navbar Logic ---
+    const navLinks = document.querySelectorAll('.bottom-nav .nav-item');
+    const sections = document.querySelectorAll('.container > div[id]');
+
+    navLinks.forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center' // 중앙에 오도록 스크롤
+                });
+            }
+        });
+    });
+
+    // 스크롤에 따른 활성 메뉴 표시
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === entry.target.id) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    }, { rootMargin: '-50% 0px -50% 0px' }); // 화면 중앙에 올 때 활성화
+
+    sections.forEach(section => observer.observe(section));
 });
 </script>
 </body>
