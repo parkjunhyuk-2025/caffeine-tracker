@@ -685,7 +685,7 @@
             const caffeineChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    datasets: [{
+                    datasets: [{ // [0] 실제 카페인 수치 (파란색 실선)
                         label: '체내 카페인 (mg)',
                         data: [],
                         borderColor: '#0A84FF',
@@ -695,7 +695,7 @@
                         tension: 0.4,
                         pointRadius: 0,
                         pointHoverRadius: 6
-                    }, {
+                    }, { // [1] 섭취 기록 (동그라미)
                         label: '섭취 기록',
                         data: initialData.scatterPoints,
                         type: 'scatter',
@@ -708,6 +708,15 @@
                         },
                         pointBorderColor: 'rgba(255, 255, 255, 0.8)',
                         pointBorderWidth: 2
+                    }, { // ★★★ [2] 예상 감소량 (회색 점선) - 추가 ★★★
+                        label: '예상 감소량',
+                        data: [],
+                        borderColor: '#8A8A8E',
+                        borderWidth: 2,
+                        borderDash: [5, 5], // 점선 스타일
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
                     }]
                 },
                 options: {
@@ -724,6 +733,10 @@
                             borderColor: 'rgba(58, 58, 60, 1)',
                             borderWidth: 1,
                             cornerRadius: 8,
+                            // 툴팁에서 예상 감소량은 제외
+                            filter: function (tooltipItem) {
+                                return tooltipItem.datasetIndex !== 2;
+                            },
                             callbacks: {
                                 label: function(context) {
                                     let label = '';
@@ -839,6 +852,48 @@
             });
 
             // --- 핵심 로직 ---
+
+            // ★★★ 미래 카페인 감소량 계산 함수 - 추가 ★★★
+            function updateFutureProjection() {
+                const projectionData = caffeineChart.data.datasets[2].data;
+                projectionData.length = 0; // 기존 예상 데이터 초기화
+
+                const lineData = caffeineChart.data.datasets[0].data;
+                if (lineData.length === 0) {
+                    return; // 데이터 없으면 중단
+                }
+
+                const lastPoint = lineData[lineData.length - 1];
+                const startTime = lastPoint.x;
+                const startAmount = lastPoint.y;
+
+                if (startAmount < 1) { // 카페인이 거의 없으면 그리지 않음
+                    return;
+                }
+
+                // 예상 그래프가 실제 그래프와 이어지도록 첫 점을 추가
+                projectionData.push({ x: startTime, y: startAmount });
+                
+                const projectionHours = 12; // 12시간 후까지 예측
+                const timeStepMinutes = 15; // 15분 간격으로 계산
+                const totalSteps = (projectionHours * 60) / timeStepMinutes;
+
+                for (let i = 1; i <= totalSteps; i++) {
+                    const timeElapsed = i * timeStepMinutes * 60 * 1000;
+                    const futureTime = startTime + timeElapsed;
+                    
+                    const decayFactor = Math.pow(0.5, timeElapsed / CAFFEINE_HALF_LIFE_MS);
+                    const futureAmount = startAmount * decayFactor;
+
+                    if (futureAmount < 1) {
+                        projectionData.push({ x: futureTime, y: 0 });
+                        break; // 1mg 미만이면 0으로 그리고 종료
+                    }
+
+                    projectionData.push({ x: futureTime, y: futureAmount });
+                }
+            }
+
             function updateDrinkStats() {
                 const scatterData = caffeineChart.data.datasets[1].data;
                 drinkStatsContainer.innerHTML = '';
@@ -950,6 +1005,7 @@
 
                 if (scatterData.length === 0) {
                     updateCaffeineDisplay(0);
+                    updateFutureProjection(); // ★★★ 데이터 없을 때도 예상선 초기화
                     caffeineChart.update('none');
                     return;
                 }
@@ -981,6 +1037,7 @@
                 lineData.push({ x: now, y: finalAmount });
 
                 updateCaffeineDisplay(finalAmount);
+                updateFutureProjection(); // ★★★ 실제 데이터 재계산 후 예상선 업데이트
                 caffeineChart.update('none');
             }
 
@@ -992,9 +1049,7 @@
                 currentZoomMode = ZOOM_MODE_HOUR;
             }
 
-            // --- ★★★ 수정된 부분: 하루 기록 보기 로직 변경 ★★★ ---
             function setDayView() {
-                // 차트의 시작점과 끝점을 항상 오늘 00:00 ~ 23:59로 고정합니다.
                 const todayStart = new Date().setHours(0, 0, 0, 0);
                 const todayEnd = new Date().setHours(23, 59, 59, 999);
 
@@ -1004,8 +1059,6 @@
                 resetZoomBtn.innerHTML = BUTTON_TEXT_DAY_VIEW;
                 currentZoomMode = ZOOM_MODE_DAY;
             }
-            // --- ★★★ 수정 완료 ★★★ ---
-
 
             function toggleZoomView() {
                 if (currentZoomMode === ZOOM_MODE_HOUR) {
@@ -1020,6 +1073,7 @@
                 if (confirm('모든 섭취 기록과 설정을 초기화하시겠습니까?')) {
                     caffeineChart.data.datasets[0].data = [];
                     caffeineChart.data.datasets[1].data = [];
+                    caffeineChart.data.datasets[2].data = []; // ★★★ 예상선 데이터도 리셋
                     updateCaffeineDisplay(0);
                     localStorage.removeItem(STORAGE_KEY);
                     localStorage.removeItem(HALF_LIFE_STORAGE_KEY);
@@ -1029,6 +1083,7 @@
                     setHalfLife(DEFAULT_HALF_LIFE_HOURS);
                     setDailyLimit(DEFAULT_DAILY_LIMIT_MG);
                     setHourView();
+                    updateFutureProjection(); // ★★★ 예상선 초기화
                     caffeineChart.update('none');
                     currentDay = new Date().setHours(0, 0, 0, 0);
                     updateDrinkStats();
@@ -1083,6 +1138,8 @@
                     if (firstValidIndex > 0) {
                         lineData.splice(0, firstValidIndex);
                     }
+                    
+                    updateFutureProjection(); // ★★★ 실시간 감소 시에도 예상선 업데이트
                     caffeineChart.update('none');
                 }
             }
