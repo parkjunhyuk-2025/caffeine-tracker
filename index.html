@@ -13,6 +13,10 @@
     <!-- / PWA & 홈 화면에 추가 설정 -->
 
     <title>카페인 트래커</title>
+
+    <!-- Font Awesome 로드 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <!-- Chart.js 라이브러리 로드 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chart.js Zoom 플러그인 로드 -->
@@ -149,6 +153,10 @@
             font-weight: 500;
             color: #FF9F0A;
         }
+        
+        .info-card i {
+            margin-right: 8px;
+        }
 
         .warning-card {
             background: rgba(255, 69, 58, 0.15); /* iOS Red with opacity */
@@ -159,6 +167,10 @@
             color: #FF453A;
             font-size: 0.95rem;
             font-weight: 500;
+        }
+        
+        .warning-card i {
+            margin-right: 8px;
         }
 
         .controls {
@@ -199,6 +211,10 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
+        }
+
+        .caffeine-btn i {
+            margin-right: 6px;
         }
 
         .custom-add-container {
@@ -282,6 +298,10 @@
             cursor: pointer;
             transition: background-color 0.2s ease;
         }
+        
+        .action-btn i {
+            margin-right: 6px;
+        }
 
         .action-btn:hover {
             background: #3A3A3C;
@@ -319,6 +339,13 @@
         .stat-drink-name {
             font-weight: 500;
             color: #EAEAEA;
+        }
+        
+        .stat-drink-name i {
+            margin-right: 8px;
+            color: #8A8A8E; /* 아이콘 색상 */
+            width: 20px; /* 아이콘 너비 고정으로 정렬 */
+            text-align: center;
         }
 
         .stat-details {
@@ -470,7 +497,6 @@
         <p class="subtitle">체내 카페인 수준을 실시간으로 모니터링하세요</p>
     </header>
     <div class="container">
-        <!-- 메뉴 순서에 맞게 재배치 및 ID 추가 -->
         <div id="current" class="current-level">
             <h2>현재 체내 카페인</h2>
             <div class="caffeine-value-container">
@@ -484,11 +510,11 @@
         </div>
 
         <div id="timeToClearContainer" class="info-card hidden">
-            <p>☕️ 10mg 미만 도달까지: <span id="timeToClear">...</span></p>
+            <p><i class="fa-solid fa-hourglass-half"></i>10mg 미만 도달까지: <span id="timeToClear">...</span></p>
         </div>
 
         <div id="caffeineLimitWarning" class="warning-card hidden">
-            <p>⚠️ 일일 권장 섭취량을 초과했습니다!</p>
+            <p><i class="fa-solid fa-triangle-exclamation"></i>일일 권장 섭취량을 초과했습니다!</p>
         </div>
 
 
@@ -496,19 +522,18 @@
             <div id="intake" class="control-section">
                 <div class="section-title">카페인 섭취하기</div>
                 <div class="button-grid">
-                    <button class="caffeine-btn" data-caffeine="150" data-name="커피">☕️ 아메리카노<br><small>150mg</small></button>
-                    <button class="caffeine-btn" data-caffeine="100" data-name="에너지 드링크">⚡️ 에너지 드링크<br><small>100mg</small></button>
-                    <button class="caffeine-btn" data-caffeine="40" data-name="차">🍵 차<br><small>40mg</small></button>
-                    <button class="caffeine-btn" data-caffeine="25" data-name="콜라">🥤 콜라<br><small>25mg</small></button>
-                    <button class="caffeine-btn" data-caffeine="15" data-name="초콜렛">🍫 초콜렛<br><small>15mg</small></button>
+                    <button class="caffeine-btn" data-caffeine="150" data-name="커피"><i class="fa-solid fa-mug-hot"></i>아메리카노<br><small>150mg</small></button>
+                    <button class="caffeine-btn" data-caffeine="100" data-name="에너지 드링크"><i class="fa-solid fa-bolt"></i>에너지 드링크<br><small>100mg</small></button>
+                    <button class="caffeine-btn" data-caffeine="40" data-name="차"><i class="fa-solid fa-leaf"></i>차<br><small>40mg</small></button>
+                    <button class="caffeine-btn" data-caffeine="25" data-name="콜라"><i class="fa-solid fa-glass-water"></i>콜라<br><small>25mg</small></button>
+                    <button class="caffeine-btn" data-caffeine="15" data-name="초콜렛"><i class="fa-solid fa-cookie-bite"></i>초콜렛<br><small>15mg</small></button>
                 </div>
                 <div class="custom-add-container">
                     <div class="custom-input-group">
                         <input type="text" id="customDrinkName" class="settings-input" placeholder="음료 이름">
-                        
                         <input type="number" id="customCaffeineAmount" class="settings-input" placeholder="mg" min="1">
                     </div>
-                    <button id="addCustomCaffeineBtn" class="action-btn">➕ 직접 추가</button>
+                    <button id="addCustomCaffeineBtn" class="action-btn"><i class="fa-solid fa-plus"></i>직접 추가</button>
                 </div>
             </div>
 
@@ -523,8 +548,8 @@
                     <input type="number" id="dailyLimitInput" class="settings-input" min="50" max="1000" step="10" value="400">
                 </div>
                 <div class="action-buttons">
-                    <button id="resetZoomBtn" class="action-btn">🗓️ 하루 기록</button>
-                    <button id="resetDataBtn" class="action-btn danger">🗑️ 데이터 리셋</button>
+                    <button id="resetZoomBtn" class="action-btn"><i class="fa-solid fa-calendar-day"></i>하루 기록</button>
+                    <button id="resetDataBtn" class="action-btn danger"><i class="fa-solid fa-trash-can"></i>데이터 리셋</button>
                 </div>
             </div>
 
@@ -539,25 +564,25 @@
 
     <nav class="bottom-nav">
         <a href="#current" class="nav-item active">
-            <span class="nav-icon">📊</span>
+            <i class="fa-solid fa-gauge-high nav-icon"></i>
             <span class="nav-text">현재</span>
         </a>
         <a href="#chart" class="nav-item">
-            <span class="nav-icon">📈</span>
+            <i class="fa-solid fa-chart-area nav-icon"></i>
             <span class="nav-text">챠트</span>
         </a>
         <a href="#intake" class="nav-item prominent">
             <div class="prominent-icon-wrapper">
-                <span class="nav-icon">➕</span>
+                <i class="fa-solid fa-plus nav-icon"></i>
             </div>
             <span class="nav-text">카페인섭취</span>
         </a>
         <a href="#settings" class="nav-item">
-            <span class="nav-icon">⚙️</span>
+            <i class="fa-solid fa-gear nav-icon"></i>
             <span class="nav-text">설정</span>
         </a>
         <a href="#stats" class="nav-item">
-            <span class="nav-icon">📝</span>
+            <i class="fa-solid fa-list-check nav-icon"></i>
             <span class="nav-text">통계</span>
         </a>
     </nav>
@@ -573,21 +598,23 @@
             const UPDATE_INTERVAL_MS = 1000;
             const ZOOM_MODE_HOUR = 'hour';
             const ZOOM_MODE_DAY = 'day';
-            const BUTTON_TEXT_HOUR_VIEW = '🗓️ 하루 기록';
-            const BUTTON_TEXT_DAY_VIEW = '⏱️ 1시간 기록';
+            const BUTTON_TEXT_HOUR_VIEW = '<i class="fa-solid fa-calendar-day"></i> 하루 기록';
+            const BUTTON_TEXT_DAY_VIEW = '<i class="fa-solid fa-clock-rotate-left"></i> 1시간 기록';
             const STORAGE_KEY = 'caffeineTrackerData';
             const HALF_LIFE_STORAGE_KEY = 'caffeineHalfLife';
             const DAILY_LIMIT_STORAGE_KEY = 'caffeineDailyLimit';
             const DEFAULT_DAILY_LIMIT_MG = 400;
             const TIME_TO_CLEAR_THRESHOLD_MG = 10;
+            
             const DRINK_EMOJIS = {
-                '커피': '☕️',
-                '에너지 드링크': '⚡️',
-                '차': '🍵',
-                '콜라': '🥤',
-                '초콜렛': '🍫',
-                '직접 입력': '🧪'
+                '커피': '<i class="fa-solid fa-mug-hot"></i>',
+                '에너지 드링크': '<i class="fa-solid fa-bolt"></i>',
+                '차': '<i class="fa-solid fa-leaf"></i>',
+                '콜라': '<i class="fa-solid fa-glass-water"></i>',
+                '초콜렛': '<i class="fa-solid fa-cookie-bite"></i>',
+                '직접 입력': '<i class="fa-solid fa-flask"></i>'
             };
+            
             const DRINK_COLORS = {
                 '커피': 'rgba(139, 69, 19, 1)',
                 '에너지 드링크': 'rgba(255, 215, 0, 1)',
@@ -627,19 +654,20 @@
                     day: currentDay,
                     scatterPoints: scatterData
                 };
-                // Note: Using in-memory storage instead of localStorage for this environment
-                window.caffeineData = dataToStore;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
             }
 
             function loadDataFromStorage() {
-                const savedData = window.caffeineData;
-                if (!savedData) return null;
+                 const savedDataJSON = localStorage.getItem(STORAGE_KEY);
+                if (!savedDataJSON) return null;
 
+                const savedData = JSON.parse(savedDataJSON);
                 const today = new Date().setHours(0, 0, 0, 0);
+
                 if (savedData.day === today) {
                     if (savedData.scatterPoints && savedData.scatterPoints.length > 0 && savedData.scatterPoints[0].y !== undefined) {
                         console.warn('구버전 데이터 포맷이 감지되었습니다. 새 포맷을 위해 데이터를 초기화합니다.');
-                        window.caffeineData = null;
+                        localStorage.removeItem(STORAGE_KEY);
                         return null;
                     }
                     currentDay = savedData.day;
@@ -647,7 +675,7 @@
                         scatterPoints: savedData.scatterPoints || []
                     };
                 } else {
-                    window.caffeineData = null;
+                    localStorage.removeItem(STORAGE_KEY);
                     return null;
                 }
             }
@@ -813,7 +841,7 @@
             // --- 핵심 로직 ---
             function updateDrinkStats() {
                 const scatterData = caffeineChart.data.datasets[1].data;
-                drinkStatsContainer.innerHTML = ''; // Clear previous stats
+                drinkStatsContainer.innerHTML = '';
 
                 if (scatterData.length === 0) {
                     drinkStatsContainer.innerHTML = '<p class="no-stats-message">아직 섭취 기록이 없습니다.</p>';
@@ -830,7 +858,6 @@
                     return acc;
                 }, {});
 
-                // Sort by count descending
                 const sortedStats = Object.entries(stats).sort(([, a], [, b]) => b.count - a.count);
 
                 sortedStats.forEach(([name, data]) => {
@@ -839,7 +866,7 @@
 
                     const drinkNameSpan = document.createElement('span');
                     drinkNameSpan.className = 'stat-drink-name';
-                    drinkNameSpan.textContent = `${DRINK_EMOJIS[name] || '🧪'} ${name}`;
+                    drinkNameSpan.innerHTML = `${DRINK_EMOJIS[name] || '<i class="fa-solid fa-question"></i>'} ${name}`;
 
                     const detailsSpan = document.createElement('span');
                     detailsSpan.className = 'stat-details';
@@ -855,19 +882,17 @@
                 const displayAmount = Math.max(0, amount);
                 currentCaffeineLevelSpan.textContent = displayAmount.toFixed(1);
                 
-                // 카페인 수치에 따른 색상 변경
                 const caffeineElement = document.querySelector('.caffeine-amount');
                 if (displayAmount > 200) {
-                    caffeineElement.style.color = '#FF453A'; // iOS Red
+                    caffeineElement.style.color = '#FF453A';
                 } else if (displayAmount > 100) {
-                    caffeineElement.style.color = '#FF9F0A'; // iOS Orange
+                    caffeineElement.style.color = '#FF9F0A';
                 } else if (displayAmount > 50) {
-                    caffeineElement.style.color = '#0A84FF'; // iOS Blue
+                    caffeineElement.style.color = '#0A84FF';
                 } else {
-                    caffeineElement.style.color = '#34C759'; // iOS Green
+                    caffeineElement.style.color = '#34C759';
                 }
                 
-                // 일일 권장량 초과 확인
                 if (displayAmount > dailyCaffeineLimit) {
                     caffeineLimitWarning.classList.remove('hidden');
                 } else {
@@ -963,29 +988,24 @@
                 const now = Date.now();
                 caffeineChart.options.scales.x.min = now - 30 * 60 * 1000;
                 caffeineChart.options.scales.x.max = now + 30 * 60 * 1000;
-                resetZoomBtn.textContent = BUTTON_TEXT_HOUR_VIEW;
+                resetZoomBtn.innerHTML = BUTTON_TEXT_HOUR_VIEW;
                 currentZoomMode = ZOOM_MODE_HOUR;
             }
 
+            // --- ★★★ 수정된 부분: 하루 기록 보기 로직 변경 ★★★ ---
             function setDayView() {
-                const lineData = caffeineChart.data.datasets[0].data;
-                let minTime, maxTime;
-
+                // 차트의 시작점과 끝점을 항상 오늘 00:00 ~ 23:59로 고정합니다.
                 const todayStart = new Date().setHours(0, 0, 0, 0);
                 const todayEnd = new Date().setHours(23, 59, 59, 999);
 
-                if (lineData.length > 0) {
-                    minTime = Math.max(lineData[0].x, todayStart);
-                } else {
-                    minTime = todayStart;
-                }
-                maxTime = todayEnd;
-
-                caffeineChart.options.scales.x.min = minTime;
-                caffeineChart.options.scales.x.max = maxTime;
-                resetZoomBtn.textContent = BUTTON_TEXT_DAY_VIEW;
+                caffeineChart.options.scales.x.min = todayStart;
+                caffeineChart.options.scales.x.max = todayEnd;
+                
+                resetZoomBtn.innerHTML = BUTTON_TEXT_DAY_VIEW;
                 currentZoomMode = ZOOM_MODE_DAY;
             }
+            // --- ★★★ 수정 완료 ★★★ ---
+
 
             function toggleZoomView() {
                 if (currentZoomMode === ZOOM_MODE_HOUR) {
@@ -997,17 +1017,22 @@
             }
 
             function resetAllData() {
-                caffeineChart.data.datasets[0].data = [];
-                caffeineChart.data.datasets[1].data = [];
-                updateCaffeineDisplay(0);
-                window.caffeineData = null;
-                window.halfLifeData = null;
-                
-                caffeineChart.update();
-                setHourView();
-                caffeineChart.update('none');
-                currentDay = new Date().setHours(0, 0, 0, 0);
-                updateDrinkStats();
+                if (confirm('모든 섭취 기록과 설정을 초기화하시겠습니까?')) {
+                    caffeineChart.data.datasets[0].data = [];
+                    caffeineChart.data.datasets[1].data = [];
+                    updateCaffeineDisplay(0);
+                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem(HALF_LIFE_STORAGE_KEY);
+                    localStorage.removeItem(DAILY_LIMIT_STORAGE_KEY);
+                    
+                    caffeineChart.update();
+                    setHalfLife(DEFAULT_HALF_LIFE_HOURS);
+                    setDailyLimit(DEFAULT_DAILY_LIMIT_MG);
+                    setHourView();
+                    caffeineChart.update('none');
+                    currentDay = new Date().setHours(0, 0, 0, 0);
+                    updateDrinkStats();
+                }
             }
 
             function addCaffeine(amount, name, elementToAnimate = null) {
@@ -1018,8 +1043,8 @@
 
                 rebuildLineData();
                 updateDrinkStats();
+                saveDataToStorage(scatterData);
                 
-                // 버튼 클릭 효과
                 if (elementToAnimate) {
                     elementToAnimate.style.transform = 'scale(0.95)';
                     setTimeout(() => {
@@ -1033,182 +1058,145 @@
                 const todayStartOfDay = new Date(now).setHours(0, 0, 0, 0);
 
                 if (todayStartOfDay > currentDay) {
-                    currentDay = todayStartOfDay; // 날짜를 오늘로 업데이트 (resetAllData 내부에서 currentDay를 사용하므로 먼저 업데이트)
-            resetAllData(); // 모든 데이터 리셋
+                    currentDay = todayStartOfDay;
+                    resetAllData();
+                    caffeineChart.update();
+                    return;
+                }
 
-            caffeineChart.update();
-            return; // 리셋 후에는 감소 로직을 실행하지 않음
-        }
+                const lineData = caffeineChart.data.datasets[0].data;
+                if (lineData.length === 0) return;
 
-        const lineData = caffeineChart.data.datasets[0].data;
-        if (lineData.length === 0) return;
+                const lastPoint = lineData[lineData.length - 1];
+                const timeElapsed = now - lastPoint.x;
 
-        // 가장 마지막 데이터 포인트에서 시간 경과에 따른 감소량만 계산하여 추가 (효율성)
-        const lastPoint = lineData[lineData.length - 1];
-        const timeElapsed = now - lastPoint.x;
+                if (timeElapsed > 0) {
+                    const decayFactor = Math.pow(0.5, timeElapsed / CAFFEINE_HALF_LIFE_MS);
+                    let newAmount = lastPoint.y * decayFactor;
+                    if (newAmount < 0.1) newAmount = 0;
+                    
+                    lineData.push({ x: now, y: newAmount });
+                    updateCaffeineDisplay(newAmount);
 
-        if (timeElapsed > 0) {
-            // 지수 함수를 이용한 반감기 공식: N(t) = N0 * (1/2)^(t/T)
-            const decayFactor = Math.pow(0.5, timeElapsed / CAFFEINE_HALF_LIFE_MS);
-            let newAmount = lastPoint.y * decayFactor;
+                    const oneDayAgo = now - 24 * 60 * 60 * 1000;
+                    const firstValidIndex = lineData.findIndex(p => p.x >= oneDayAgo);
+                    if (firstValidIndex > 0) {
+                        lineData.splice(0, firstValidIndex);
+                    }
+                    caffeineChart.update('none');
+                }
+            }
 
-            // 카페인 양이 매우 적으면 0으로 처리
-            if (newAmount < 0.1) {
-                newAmount = 0;
+            // --- 이벤트 리스너 및 타이머 설정 ---
+            controlButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const amount = parseInt(button.dataset.caffeine, 10);
+                    const name = button.dataset.name;
+                    addCaffeine(amount, name, event.currentTarget);
+                });
+            });
+
+            addCustomCaffeineBtn.addEventListener('click', (event) => {
+                const amount = parseInt(customCaffeineAmountInput.value, 10);
+                let name = customDrinkNameInput.value.trim();
+
+                if (isNaN(amount) || amount <= 0) {
+                    alert('유효한 카페인 양을 입력해주세요.');
+                    customCaffeineAmountInput.focus();
+                    return;
+                }
+
+                if (name === '') {
+                    name = '직접 입력';
+                }
+                addCaffeine(amount, name, event.currentTarget);
+                customDrinkNameInput.value = '';
+                customCaffeineAmountInput.value = '';
+            });
+
+            function setHalfLife(value) {
+                const newHalfLife = Math.max(0.1, Math.min(24, parseFloat(value)));
+                if (isNaN(newHalfLife)) return;
+
+                caffeineHalfLifeHours = newHalfLife;
+                CAFFEINE_HALF_LIFE_MS = caffeineHalfLifeHours * 60 * 60 * 1000;
+                
+                halfLifeNumberInput.value = newHalfLife.toFixed(1);
+                
+                localStorage.setItem(HALF_LIFE_STORAGE_KEY, newHalfLife);
+                rebuildLineData();
+                saveDataToStorage(caffeineChart.data.datasets[1].data);
             }
             
-            lineData.push({ x: now, y: newAmount });
-            updateCaffeineDisplay(newAmount);
+            function setDailyLimit(value) {
+                const newLimit = parseInt(value, 10);
+                if (isNaN(newLimit) || newLimit <= 0) return;
 
-            // 성능을 위해 오래된 라인 데이터 포인트 제거
-            const oneDayAgo = now - 24 * 60 * 60 * 1000;
-            const firstValidIndex = lineData.findIndex(p => p.x >= oneDayAgo);
-            if (firstValidIndex > 0) {
-                lineData.splice(0, firstValidIndex);
+                dailyCaffeineLimit = newLimit;
+                dailyLimitInput.value = newLimit;
+
+                const limitLine = caffeineChart.options.plugins.annotation.annotations.limitLine;
+                limitLine.yMin = newLimit;
+                limitLine.yMax = newLimit;
+                limitLine.label.content = `일일 권장량 (${newLimit}mg)`;
+                caffeineChart.update('none');
+
+                localStorage.setItem(DAILY_LIMIT_STORAGE_KEY, newLimit);
+                updateCaffeineDisplay(parseFloat(currentCaffeineLevelSpan.textContent));
             }
-            caffeineChart.update('none');
-        }
-    }
 
-    // --- 이벤트 리스너 및 타이머 설정 ---
+            halfLifeNumberInput.addEventListener('change', () => setHalfLife(halfLifeNumberInput.value));
+            dailyLimitInput.addEventListener('change', () => setDailyLimit(dailyLimitInput.value));
+            resetZoomBtn.addEventListener('click', toggleZoomView);
+            resetDataBtn.addEventListener('click', resetAllData);
 
-    // 각 버튼에 클릭 이벤트 리스너 추가
-    controlButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            const amount = parseInt(button.dataset.caffeine, 10);
-            const name = button.dataset.name;
-            addCaffeine(amount, name, event.currentTarget);
-        });
-    });
+            // --- 초기화 실행 ---
+            const savedHalfLife = localStorage.getItem(HALF_LIFE_STORAGE_KEY);
+            setHalfLife(savedHalfLife || DEFAULT_HALF_LIFE_HOURS);
 
-    addCustomCaffeineBtn.addEventListener('click', (event) => {
-        const amount = parseInt(customCaffeineAmountInput.value, 10);
-        let name = customDrinkNameInput.value.trim();
+            const savedLimit = localStorage.getItem(DAILY_LIMIT_STORAGE_KEY);
+            setDailyLimit(savedLimit || DEFAULT_DAILY_LIMIT_MG);
 
-        if (isNaN(amount) || amount <= 0) {
-            alert('유효한 카페인 양을 입력해주세요.');
-            customCaffeineAmountInput.focus();
-            return;
-        }
+            rebuildLineData();
+            updateDrinkStats();
+            setHourView();
 
-        if (name === '') {
-            name = '직접 입력';
-        }
-        addCaffeine(amount, name, event.currentTarget);
-        customDrinkNameInput.value = '';
-        customCaffeineAmountInput.value = '';
-    });
+            setInterval(simulateDecay, UPDATE_INTERVAL_MS);
 
-    // 반감기 값을 설정하고 UI와 상태를 업데이트하는 통합 함수
-    function setHalfLife(value) {
-        // 입력값이 유효한 범위(1-12) 내에 있도록 보정
-        const newHalfLife = Math.max(0.1, Math.min(24, parseFloat(value)));
+            // --- Sticky Navbar Logic ---
+            const navLinks = document.querySelectorAll('.bottom-nav .nav-item');
+            const sections = document.querySelectorAll('.container > div[id]');
 
-        if (isNaN(newHalfLife)) return; // 유효하지 않은 숫자 입력은 무시
+            navLinks.forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
 
-        // 상태 변수 업데이트
-        caffeineHalfLifeHours = newHalfLife;
-        CAFFEINE_HALF_LIFE_MS = caffeineHalfLifeHours * 60 * 60 * 1000;
-        
-        // UI 요소(숫자 입력 필드) 동기화
-        halfLifeNumberInput.value = newHalfLife.toFixed(1);
-
-        // 변경사항 저장 및 그래프 재계산
-        localStorage.setItem(HALF_LIFE_STORAGE_KEY, newHalfLife);
-        rebuildLineData();
-        saveDataToStorage(caffeineChart.data.datasets[1].data);
-    }
-    
-    function setDailyLimit(value) {
-        const newLimit = parseInt(value, 10);
-        if (isNaN(newLimit) || newLimit <= 0) return;
-
-        dailyCaffeineLimit = newLimit;
-        dailyLimitInput.value = newLimit;
-
-        // 차트 어노테이션 업데이트
-        const limitLine = caffeineChart.options.plugins.annotation.annotations.limitLine;
-        limitLine.yMin = newLimit;
-        limitLine.yMax = newLimit;
-        limitLine.label.content = `일일 권장량 (${newLimit}mg)`;
-        caffeineChart.update('none');
-
-        // 로컬 스토리지에 저장
-        localStorage.setItem(DAILY_LIMIT_STORAGE_KEY, newLimit);
-
-        updateCaffeineDisplay(parseFloat(currentCaffeineLevelSpan.textContent));
-    }
-
-    // 반감기 숫자 입력 필드 이벤트 리스너 ('change'는 입력 완료 후 포커스가 벗어날 때 발생)
-    halfLifeNumberInput.addEventListener('change', () => {
-        setHalfLife(halfLifeNumberInput.value);
-    });
-
-    // 줌 리셋 버튼에 이벤트 리스너 추가
-    dailyLimitInput.addEventListener('change', () => {
-        setDailyLimit(dailyLimitInput.value);
-    });
-
-    // 줌 리셋 버튼에 이벤트 리스너 추가
-    resetZoomBtn.addEventListener('click', toggleZoomView);
-
-    // 데이터 리셋 버튼에 이벤트 리스너 추가
-    resetDataBtn.addEventListener('click', resetAllData);
-
-    // --- 초기화 실행 ---
-
-    // 저장된 반감기 값 불러오기 또는 기본값 사용
-    const savedHalfLife = localStorage.getItem(HALF_LIFE_STORAGE_KEY);
-    caffeineHalfLifeHours = savedHalfLife ? parseFloat(savedHalfLife) : DEFAULT_HALF_LIFE_HOURS;
-    // CAFFEINE_HALF_LIFE_MS는 setHalfLife에서 설정되므로 여기서는 초기화만
-    setHalfLife(caffeineHalfLifeHours); // 초기 값 설정 및 UI 동기화
-
-    // 저장된 일일 권장량 불러오기 또는 기본값 사용
-    const savedLimit = localStorage.getItem(DAILY_LIMIT_STORAGE_KEY);
-    setDailyLimit(savedLimit || DEFAULT_DAILY_LIMIT_MG);
-
-    rebuildLineData(); // 불러온 섭취 기록으로 라인 그래프 생성
-    updateDrinkStats();
-    setHourView(); // 차트 초기 뷰를 1시간으로 설정
-
-    // 1초마다 카페인 감소 시뮬레이션 실행
-    setInterval(simulateDecay, UPDATE_INTERVAL_MS);
-
-    // --- Sticky Navbar Logic ---
-    const navLinks = document.querySelectorAll('.bottom-nav .nav-item');
-    const sections = document.querySelectorAll('.container > div[id]');
-
-    navLinks.forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center' // 중앙에 오도록 스크롤
-                });
-            }
-        });
-    });
-
-    // 스크롤에 따른 활성 메뉴 표시
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href').substring(1) === entry.target.id) {
-                        link.classList.add('active');
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
                     }
                 });
-            }
-        });
-    }, { rootMargin: '-50% 0px -50% 0px' }); // 화면 중앙에 올 때 활성화
+            });
 
-    sections.forEach(section => observer.observe(section));
-});
-</script>
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px' });
+
+            sections.forEach(section => observer.observe(section));
+        });
+    </script>
 </body>
 </html>
