@@ -581,11 +581,15 @@
             <div id="settings" class="control-section">
                 <div class="section-title">설정 및 관리</div>
                 <div class="settings-row">
+                    <label for="weightInput">체중 (kg)</label>
+                    <input type="number" id="weightInput" class="settings-input" min="20" max="200" step="1" placeholder="kg">
+                </div>
+                <div class="settings-row">
                     <label for="halfLifeNumberInput">반감기 (시간)</label>
                     <input type="number" id="halfLifeNumberInput" class="settings-input" min="0.1" max="24" step="0.1" value="5">
                 </div>
                 <div class="settings-row">
-                    <label for="dailyLimitInput">권장량 (mg)</label>
+                    <label for="dailyLimitInput">1일 최대 (mg)</label>
                     <input type="number" id="dailyLimitInput" class="settings-input" min="50" max="1000" step="10" value="400">
                 </div>
                 <!-- ★★★ START: 기존 '하루 기록' 버튼 삭제 ★★★ -->
@@ -649,7 +653,9 @@
             const STORAGE_KEY = 'caffeineTrackerData';
             const HALF_LIFE_STORAGE_KEY = 'caffeineHalfLife';
             const DAILY_LIMIT_STORAGE_KEY = 'caffeineDailyLimit';
+            const WEIGHT_STORAGE_KEY = 'caffeineTrackerWeight';
             const DEFAULT_DAILY_LIMIT_MG = 400;
+            const CAFFEINE_PER_KG = 2.5;
             const TIME_TO_CLEAR_THRESHOLD_MG = 10;
             
             const DRINK_EMOJIS = {
@@ -684,6 +690,7 @@
             const timeToClearSpan = document.getElementById('timeToClear');
             const caffeineLimitWarning = document.getElementById('caffeineLimitWarning');
             const dailyLimitInput = document.getElementById('dailyLimitInput');
+            const weightInput = document.getElementById('weightInput');
             const drinkStatsContainer = document.getElementById('drinkStatsContainer');
             const customDrinkNameInput = document.getElementById('customDrinkName');
             const customCaffeineAmountInput = document.getElementById('customCaffeineAmount');
@@ -1090,6 +1097,8 @@
                     localStorage.removeItem(STORAGE_KEY);
                     localStorage.removeItem(HALF_LIFE_STORAGE_KEY);
                     localStorage.removeItem(DAILY_LIMIT_STORAGE_KEY);
+                    localStorage.removeItem(WEIGHT_STORAGE_KEY);
+                    weightInput.value = '';
                     caffeineChart.update();
                     setHalfLife(DEFAULT_HALF_LIFE_HOURS);
                     setDailyLimit(DEFAULT_DAILY_LIMIT_MG);
@@ -1098,8 +1107,8 @@
                     caffeineChart.update('none');
                     currentDay = new Date().setHours(0, 0, 0, 0);
                     updateDrinkStats();
-                }
             }
+        }
 
             function addCaffeine(amount, name, elementToAnimate = null) {
                 const now = Date.now();
@@ -1194,8 +1203,20 @@
                 updateCaffeineDisplay(parseFloat(currentCaffeineLevelSpan.textContent));
             }
 
+            function handleWeightChange() {
+                const weight = parseFloat(weightInput.value);
+                if (!isNaN(weight) && weight > 0) {
+                    const calculatedLimit = Math.round(weight * CAFFEINE_PER_KG);
+                    setDailyLimit(calculatedLimit);
+                    localStorage.setItem(WEIGHT_STORAGE_KEY, weight);
+                } else {
+                    localStorage.removeItem(WEIGHT_STORAGE_KEY);
+                }
+            }
+
             halfLifeNumberInput.addEventListener('change', () => setHalfLife(halfLifeNumberInput.value));
             dailyLimitInput.addEventListener('change', () => setDailyLimit(dailyLimitInput.value));
+            weightInput.addEventListener('change', handleWeightChange);
             // ★★★ START: 새 줌 버튼에 이벤트 리스너 연결 ★★★
             chartZoomToggleBtn.addEventListener('click', toggleZoomView);
             // ★★★ END: 새 줌 버튼에 이벤트 리스너 연결 ★★★
@@ -1204,8 +1225,14 @@
             // --- 초기화 실행 ---
             const savedHalfLife = localStorage.getItem(HALF_LIFE_STORAGE_KEY);
             setHalfLife(savedHalfLife || DEFAULT_HALF_LIFE_HOURS);
-            const savedLimit = localStorage.getItem(DAILY_LIMIT_STORAGE_KEY);
-            setDailyLimit(savedLimit || DEFAULT_DAILY_LIMIT_MG);
+            const savedWeight = localStorage.getItem(WEIGHT_STORAGE_KEY);
+            if (savedWeight) {
+                weightInput.value = savedWeight;
+                handleWeightChange();
+            } else {
+                const savedLimit = localStorage.getItem(DAILY_LIMIT_STORAGE_KEY);
+                setDailyLimit(savedLimit || DEFAULT_DAILY_LIMIT_MG);
+            }
             rebuildLineData();
             updateDrinkStats();
             setHourView();
